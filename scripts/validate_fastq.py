@@ -12,6 +12,9 @@ def validate_fastq(path):
     else:
         lines = Path(path).read_text().splitlines()
 
+    if not lines:
+        return False, "FASTQ file contains no records."
+
     if len(lines) % 4 != 0:
         return False, "File does not contain complete FASTQ records."
 

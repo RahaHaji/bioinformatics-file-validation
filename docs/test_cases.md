@@ -199,17 +199,167 @@ The test confirms that the validator can process multiple valid records rather t
 | TC-006  | Empty sequence            | FAIL     | FAIL     | PASS        |
 | TC-007  | Multiple records          | PASS     | PASS     | PASS        |
 
-## 5. Observations and Future Improvements
+## 5. Expanded Edge-Case Tests
 
-The initial manual testing demonstrates that the validator correctly distinguishes between several valid and invalid FASTQ structures.
+The validation suite was expanded to cover additional edge cases and compressed FASTQ input.
 
-The tests also identified opportunities to improve diagnostic specificity. In particular, missing separators, truncated records, and empty sequences can currently result in relatively general error messages.
+### TC-008 — Empty FASTQ File
+
+**Objective:**
+Verify that the validator rejects an empty FASTQ file.
+
+**Input:**
+`example_data/empty.fastq`
+
+**Expected Result:**
+The validator should reject the file and report that it contains no records.
+
+**Observed Result:**
+`FAIL: FASTQ file contains no records.`
+
+**Test Result:**
+PASS
+
+**Notes:**
+An empty FASTQ file contains no sequencing records and is therefore rejected.
+
+---
+
+### TC-009 — Empty Compressed FASTQ File
+
+**Objective:**
+Verify that the validator rejects an empty compressed FASTQ file.
+
+**Input:**
+`example_data/empty.fastq.gz`
+
+**Expected Result:**
+The validator should reject the file and report that it contains no records.
+
+**Observed Result:**
+`FAIL: FASTQ file contains no records.`
+
+**Test Result:**
+PASS
+
+**Notes:**
+This confirms that the empty-file validation behaviour is also applied to `.fastq.gz` input.
+
+---
+
+### TC-010 — Invalid Later Record
+
+**Objective:**
+Verify that the validator identifies a structural error occurring in a later FASTQ record.
+
+**Input:**
+`example_data/multiple_reads_invalid.fastq`
+
+**Expected Result:**
+The validator should reject the file and identify the sequence/quality length mismatch in Record 2.
+
+**Observed Result:**
+`FAIL: Record 2: sequence and quality lengths differ.`
+
+**Test Result:**
+PASS
+
+**Notes:**
+Record 1 is valid, while Record 2 contains the deliberate sequence/quality length mismatch. The validator reports the first validation failure encountered.
+
+---
+
+### TC-011 — Invalid Compressed Later Record
+
+**Objective:**
+Verify that the validator detects a structural error occurring in a later record of a compressed FASTQ file.
+
+**Input:**
+`example_data/multiple_reads_invalid.fastq.gz`
+
+**Expected Result:**
+The validator should reject the file and identify the sequence/quality length mismatch in Record 2.
+
+**Observed Result:**
+`FAIL: Record 2: sequence and quality lengths differ.`
+
+**Test Result:**
+PASS
+
+**Notes:**
+This confirms consistent validation behaviour between uncompressed and compressed FASTQ input.
+
+---
+
+### TC-012 — Invalid Header in Later Record
+
+**Objective:**
+Verify that the validator detects a malformed header occurring after an earlier valid record.
+
+**Input:**
+`example_data/multiple_reads_invalid_header.fastq`
+
+**Expected Result:**
+The validator should reject the file and identify the malformed header in Record 2.
+
+**Observed Result:**
+`FAIL: Record 2: header does not start with @.`
+
+**Test Result:**
+PASS
+
+**Notes:**
+Record 1 is valid and Record 2 contains the deliberate malformed header.
+
+---
+
+## 6. Automated Regression Testing
+
+The manual validation cases are supplemented by automated regression tests using `pytest`.
+
+The automated test suite currently contains 13 tests covering:
+
+* valid FASTQ input;
+* sequence/quality length mismatches;
+* malformed headers;
+* missing separators;
+* truncated records;
+* empty sequences;
+* multiple valid records;
+* valid compressed FASTQ input;
+* empty FASTQ files;
+* empty compressed FASTQ files;
+* invalid later records;
+* invalid compressed FASTQ input;
+* malformed headers occurring in later records.
+
+The test suite is executed using:
+
+```bash
+python -m pytest
+```
+
+The current observed result is:
+
+```text
+13 passed
+```
+
+This means that all 13 automated tests passed successfully.
+
+Automated tests provide regression coverage so that changes to the validator can be checked consistently against previously tested behaviour.
+
+---
+
+## 7. Observations and Future Improvements
+
+The expanded validation suite demonstrates that the validator can handle a range of valid and deliberately malformed FASTQ inputs, including compressed input.
+
+The testing process has also identified opportunities for further improvement in diagnostic specificity. For example, the current implementation may report a general incomplete-record error when a specific missing separator could potentially be identified more precisely.
 
 Potential future improvements include:
 
 1. providing more specific error messages for individual structural failures;
-2. reporting the affected record number and line where appropriate;
-3. adding automated regression tests using `pytest`;
-4. testing additional edge cases;
-5. supporting compressed `.fastq.gz` input;
-6. improving the command-line interface with additional options such as configurable output or validation modes.
+2. reporting affected record and line numbers where appropriate;
+3. reporting multiple validation errors rather than stopping at the first failure;
+4. improving the command-line interface with additional options such as configurable output or validation modes.

@@ -62,3 +62,46 @@ def test_valid_fastq_gz():
 
     assert valid is True
     assert message == "FASTQ structure is valid."
+
+def test_empty_fastq():
+    valid, message = validate_fastq(
+        "example_data/empty.fastq"
+    )
+
+    assert valid is False
+    assert "contains no records" in message
+
+def test_empty_fastq_gz():
+    valid, message = validate_fastq(
+        "example_data/empty.fastq.gz"
+    )
+
+    assert valid is False
+    assert "contains no records" in message
+
+def test_multiple_reads_later_record_invalid():
+    valid, message = validate_fastq(
+        "example_data/multiple_reads_invalid.fastq"
+    )
+
+    assert valid is False
+    assert "Record 2" in message
+    assert "sequence and quality lengths differ" in message
+
+def test_multiple_reads_invalid_gz():
+    valid, message = validate_fastq(
+        "example_data/multiple_reads_invalid.fastq.gz"
+    )
+
+    assert valid is False
+    assert "Record 2" in message
+    assert "sequence and quality lengths differ" in message
+
+def test_multiple_reads_later_header_invalid():
+    valid, message = validate_fastq(
+        "example_data/multiple_reads_invalid_header.fastq"
+    )
+
+    assert valid is False
+    assert "Record 2" in message
+    assert "header does not start with @" in message
