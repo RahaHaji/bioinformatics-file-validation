@@ -22,6 +22,9 @@ def validate_fastq(path):
         if not separator.startswith("+"):
             return False, f"Record {i // 4 + 1}: separator does not start with +."
 
+        if not sequence:
+            return False, f"Record {i // 4 + 1}: sequence is empty."
+
         if len(sequence) != len(quality):
             return False, (
                 f"Record {i // 4 + 1}: sequence and quality lengths differ."
