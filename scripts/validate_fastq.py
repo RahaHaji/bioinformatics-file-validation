@@ -1,11 +1,16 @@
 from pathlib import Path
+import gzip 
 import sys 
 
 
 def validate_fastq(path):
     """Check the basic structure of a FASTQ file."""
 
-    lines = Path(path).read_text().splitlines()
+    if str(path).endswith(".gz"):
+        with gzip.open(path, "rt") as handle:
+            lines = handle.read().splitlines()
+    else:
+        lines = Path(path).read_text().splitlines()
 
     if len(lines) % 4 != 0:
         return False, "File does not contain complete FASTQ records."

@@ -55,3 +55,10 @@ def test_multiple_reads():
     assert valid is True
     assert message == "FASTQ structure is valid."
 
+def test_valid_fastq_gz():
+    valid, message = validate_fastq(
+        "example_data/valid.fastq.gz"
+    )
+
+    assert valid is True
+    assert message == "FASTQ structure is valid."
