@@ -1,4 +1,5 @@
 from pathlib import Path
+import sys 
 
 
 def validate_fastq(path):
@@ -47,5 +48,7 @@ if __name__ == "__main__":
 
     if valid:
         print(f"PASS: {message}")
+        sys.exit(0) 
     else:
         print(f"FAIL: {message}")
+        sys.exit(1) 
