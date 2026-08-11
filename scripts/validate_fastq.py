@@ -16,7 +16,8 @@ def validate_fastq(path):
         return False, "FASTQ file contains no records."
 
     if len(lines) % 4 != 0:
-        return False, "File does not contain complete FASTQ records."
+        record_number = len(lines) // 4 + 1
+        return False, f"Record {record_number}: incomplete FASTQ record."
 
     for i in range(0, len(lines), 4):
         header = lines[i]

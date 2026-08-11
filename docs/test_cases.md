@@ -102,22 +102,22 @@ The test demonstrates negative testing using deliberately malformed input.
 ### TC-004 — Missing `+` Separator
 
 **Objective:**
-Verify that the validator rejects a FASTQ record missing the required `+` separator line.
+Verify that the validator rejects a FASTQ record whose separator line does not begin with `+`.
 
 **Input:**
 `example_data/invalid_separator.fastq`
 
 **Expected Result:**
-The validator should reject the incomplete FASTQ record.
+The validator should reject the record and report that the separator does not start with `+`.
 
 **Observed Result:**
-`FAIL: File does not contain complete FASTQ records.`
+`FAIL: Record 1: separator does not start with +.`
 
 **Test Result:**
 PASS
 
 **Notes:**
-The validator correctly rejected the three-line record. The current implementation does not yet provide a specific diagnostic identifying the missing `+` separator.
+The test uses a complete four-line FASTQ record with a deliberately malformed separator line. The validator correctly identifies the separator-specific structural error.
 
 ---
 
@@ -133,13 +133,13 @@ Verify that the validator rejects a FASTQ record that does not contain all four 
 The validator should reject the incomplete record.
 
 **Observed Result:**
-`FAIL: File does not contain complete FASTQ records.`
+`FAIL: Record 1: incomplete FASTQ record.`
 
 **Test Result:**
 PASS
 
 **Notes:**
-The validator correctly detected that the record was incomplete.
+The validator correctly detected the incomplete record and identified the affected record number.
 
 ---
 

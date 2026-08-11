@@ -29,7 +29,7 @@ def test_invalid_separator():
     )
 
     assert valid is False
-    assert "complete FASTQ records" in message
+    assert "Record 1: separator does not start with +" in message
 
 def test_truncated():
     valid, message = validate_fastq(
@@ -37,7 +37,7 @@ def test_truncated():
     )
 
     assert valid is False
-    assert "complete FASTQ records" in message
+    assert "Record 1: incomplete FASTQ record" in message
 
 def test_empty_sequence():
     valid, message = validate_fastq(
