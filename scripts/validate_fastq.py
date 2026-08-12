@@ -42,7 +42,7 @@ def validate_fastq(path):
     return True, "FASTQ structure is valid."
 
 
-if __name__ == "__main__":
+def main():
     import argparse
 
     parser = argparse.ArgumentParser(
@@ -63,4 +63,7 @@ if __name__ == "__main__":
         sys.exit(0) 
     else:
         print(f"FAIL: {message}")
-        sys.exit(1) 
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
