@@ -8,14 +8,15 @@ FASTQ is a common file format used to store sequencing reads and their associate
 
 This project implements a lightweight FASTQ validator that checks structural properties including:
 
-* FASTQ records contain four lines;
-* record headers begin with `@`;
-* separator lines begin with `+`;
-* sequence lines are not empty;
-* sequence and quality strings have matching lengths;
-* multiple FASTQ records can be processed;
-* compressed `.fastq.gz` files can be validated;
-* command-line execution returns appropriate exit codes.
+- FASTQ records contain four lines;
+- record headers begin with `@`;
+- separator lines begin with `+`;
+- sequence lines are not empty;
+- sequence and quality strings have matching lengths;
+- multiple FASTQ records can be processed;
+- compressed `.fastq.gz` files can be validated;
+- command-line execution returns appropriate exit codes;
+- the validator can be installed as a command-line tool.
 
 The project also includes synthetic test data, manual test documentation, and an automated `pytest` regression suite.
 
@@ -46,6 +47,7 @@ bioinformatics-file-validation/
 ├── tests/
 │   └── test_validate_fastq.py
 ├── .gitignore
+├── pyproject.toml
 └── README.md
 ```
 
@@ -53,20 +55,74 @@ All example sequencing files are synthetic test data created specifically for th
 
 ## Requirements
 
-The project uses Python 3 and `pytest` for automated testing.
+The project requires Python 3.11 or later.
+
+`pytest` is used for automated testing. The project is packaged using `pyproject.toml` and setuptools.
 
 The validator itself uses only Python standard-library modules, including:
 
-* `pathlib`
-* `gzip`
-* `argparse`
-* `sys`
+- `pathlib`
+- `gzip`
+- `argparse`
+- `sys`
+
+## Installation
+
+From the project root, install the project in editable mode:
+
+```bash
+python -m pip install -e .
+```
+
+This installs the project into the current Python environment and makes the `validate-fastq` command available.
+
+Editable installation is useful during development because changes to the source code can be tested without repeatedly rebuilding and reinstalling the project.
 
 ## Running the Validator
 
-### Validate a FASTQ file
+### Using the installed command
 
-From the project root:
+After installation, the validator can be run using:
+
+```bash
+validate-fastq example_data/valid.fastq
+```
+
+A valid file produces:
+
+```text
+PASS: FASTQ structure is valid.
+```
+
+An invalid file produces a `FAIL` message and returns exit code `1`.
+
+For example:
+
+```bash
+validate-fastq example_data/invalid_quality.fastq
+```
+
+produces:
+
+```text
+FAIL: Record 1: sequence and quality lengths differ.
+```
+
+The installed command can also process compressed FASTQ files:
+
+```bash
+validate-fastq example_data/valid.fastq.gz
+```
+
+which produces:
+
+```text
+PASS: FASTQ structure is valid.
+```
+
+### Running the Python script directly
+
+The Python script can also be executed directly:
 
 ```bash
 python scripts/validate_fastq.py example_data/valid.fastq
@@ -114,7 +170,7 @@ The command-line validator returns machine-readable exit statuses:
 For example:
 
 ```bash
-python scripts/validate_fastq.py example_data/valid.fastq
+validate-fastq example_data/valid.fastq
 echo $?
 ```
 
@@ -144,19 +200,19 @@ python -m pytest
 
 The current test suite contains **13 automated tests** covering:
 
-* valid FASTQ input;
-* sequence/quality length mismatches;
-* malformed headers;
-* malformed separator lines;
-* truncated records;
-* empty sequences;
-* multiple valid records;
-* valid compressed FASTQ input;
-* empty FASTQ files;
-* empty compressed FASTQ files;
-* invalid later records;
-* invalid compressed FASTQ input;
-* malformed headers occurring in later records.
+- valid FASTQ input;
+- sequence/quality length mismatches;
+- malformed headers;
+- malformed separator lines;
+- truncated records;
+- empty sequences;
+- multiple valid records;
+- valid compressed FASTQ input;
+- empty FASTQ files;
+- empty compressed FASTQ files;
+- invalid later records;
+- invalid compressed FASTQ input;
+- malformed headers occurring in later records.
 
 The current test suite passes:
 
@@ -172,16 +228,16 @@ The `example_data/` directory contains small synthetic FASTQ examples representi
 
 Examples include:
 
-* valid single-record FASTQ;
-* valid multiple-record FASTQ;
-* invalid headers;
-* invalid separator lines;
-* sequence/quality length mismatches;
-* empty sequences;
-* truncated records;
-* empty FASTQ files;
-* invalid records occurring later in a file;
-* compressed FASTQ input.
+- valid single-record FASTQ;
+- valid multiple-record FASTQ;
+- invalid headers;
+- invalid separator lines;
+- sequence/quality length mismatches;
+- empty sequences;
+- truncated records;
+- empty FASTQ files;
+- invalid records occurring later in a file;
+- compressed FASTQ input.
 
 This provides reproducible input for both manual and automated validation.
 
@@ -201,9 +257,9 @@ docs/validation_plan.md
 
 The test-case documentation distinguishes between:
 
-* **Expected Result** — the behaviour defined before testing;
-* **Observed Result** — the behaviour produced by the validator;
-* **Test Result** — whether the observed behaviour matched the expected behaviour.
+- **Expected Result** — the behaviour defined before testing;
+- **Observed Result** — the behaviour produced by the validator;
+- **Test Result** — whether the observed behaviour matched the expected behaviour.
 
 This distinction is important because an invalid FASTQ file is expected to produce a `FAIL` message from the validator, while the corresponding software test should still be recorded as `PASS` when the validator correctly identifies the invalid input.
 
@@ -213,12 +269,12 @@ The validator currently focuses on **basic FASTQ structural validation**.
 
 It does not attempt to provide full biological or sequence-quality validation. For example, the current implementation does not validate:
 
-* nucleotide alphabet restrictions;
-* FASTQ quality-score encoding ranges;
-* biological sequence content;
-* read identifiers against a specific naming convention;
-* paired-end relationships between separate FASTQ files;
-* sequencing-platform-specific requirements.
+- nucleotide alphabet restrictions;
+- FASTQ quality-score encoding ranges;
+- biological sequence content;
+- read identifiers against a specific naming convention;
+- paired-end relationships between separate FASTQ files;
+- sequencing-platform-specific requirements.
 
 These are outside the current scope and could be considered in future development.
 
@@ -237,17 +293,19 @@ Potential future improvements include:
 
 This project is intended to demonstrate practical software development and testing skills in a bioinformatics context, including:
 
-* Python programming;
-* command-line tool development;
-* FASTQ file handling;
-* compressed-file processing;
-* automated testing with `pytest`;
-* negative and edge-case testing;
-* regression testing;
-* synthetic test-data design;
-* meaningful error reporting;
-* machine-readable exit codes;
-* technical documentation;
-* Git version control.
+- Python programming;
+- command-line tool development;
+- Python package configuration;
+- installed command-line interfaces;
+- FASTQ file handling;
+- compressed-file processing;
+- automated testing with `pytest`;
+- negative and edge-case testing;
+- regression testing;
+- synthetic test-data design;
+- meaningful error reporting;
+- machine-readable exit codes;
+- technical documentation;
+- Git version control.
 
 The emphasis is on building a small, reproducible, testable bioinformatics utility rather than implementing a full production-grade FASTQ parser.
