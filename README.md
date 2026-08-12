@@ -257,9 +257,9 @@ docs/validation_plan.md
 
 The test-case documentation distinguishes between:
 
-- **Expected Result** — the behaviour defined before testing;
-- **Observed Result** — the behaviour produced by the validator;
-- **Test Result** — whether the observed behaviour matched the expected behaviour.
+- **Expected Result:** the behaviour defined before testing;
+- **Observed Result:** the behaviour produced by the validator;
+- **Test Result:** whether the observed behaviour matched the expected behaviour.
 
 This distinction is important because an invalid FASTQ file is expected to produce a `FAIL` message from the validator, while the corresponding software test should still be recorded as `PASS` when the validator correctly identifies the invalid input.
 
